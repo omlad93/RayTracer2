@@ -1,0 +1,51 @@
+package dataTypes;
+import java.util.LinkedList;
+
+public class Box extends Surface {
+	protected LinkedList<Plane> planes = new LinkedList<Plane>();
+	protected Vec center;
+	protected double edgeLen;
+	
+	
+	public Box(Vec position, double len,Material mat, int idx) {
+		center = position;
+		edgeLen = len;
+		material = mat;
+		name = "Box(" + idx + ")";
+		int j;
+		Vec unitVec, p;
+		double d;
+		
+		for (int k=-3 ; k<=6 ; k++) {
+			if (k != 0) {
+				unitVec = new Vec(k,"XYZ"); //normal
+				p = center.add(unitVec.multiply(len/2)); //point on plane
+				d = p.dotProduct(unitVec); // d = ax+by+cz
+				j = (k>0) ? Math.abs(k)+3 : Math.abs(k) ;
+				planes.add(new Plane(unitVec,d,mat,j));
+			}
+		}
+		
+
+	}
+	
+	@Override
+	public Vec getNormalVec(Vec point) {
+		for (Plane plane : planes) {
+			if (plane.normal.dotProduct(point) == plane.offset) {
+				return plane.normal;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Intersection intersect(Vec ray, Vec origin) {
+		Intersection inter=null;
+		for (Plane plane : planes) {
+			inter = Intersection.getFirst(inter, plane.intersect(ray, origin));	
+		}
+		return inter;
+	}
+	
+}
