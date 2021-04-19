@@ -86,6 +86,10 @@ public class Vec {
 		return new Vec(v1*scalar, v2*scalar,v3*scalar,type);
 	}
 	
+	public Vec multiply(int scalar) {
+		return new Vec(v1*scalar, v2*scalar,v3*scalar,type);
+	}
+	
 	public Vec add(Vec other) {
 		if (type != other.type) {
 			System.out.println("Addition between " + type + " and " + other.type);
@@ -127,6 +131,9 @@ public class Vec {
 	
 	public static Vec createDistVec(Vec source, Vec dist) {
 		return dist.subtract(source);
+	}
+	public static Vec perfromSteps(Vec startPoint ,int stepsRight, int stepsUp) {
+		return null;
 	}
 	
 }
