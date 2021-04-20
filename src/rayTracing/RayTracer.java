@@ -191,6 +191,8 @@ public class RayTracer {
 			for (int j=0; j< imageWidth; j++) {
 				Vec pixel = scene.findPixleCenter(i, j);
 				Vec cameraRay = Vec.createDistVec(scene.cameraPos(), pixel);
+				//get first ray intersection
+				//store to rgbData
 			}
 			
 		}
@@ -206,7 +208,6 @@ public class RayTracer {
 		System.out.println("Saved file " + outputFileName);
 
 	}
-
 
 	//////////////////////// FUNCTIONS TO SAVE IMAGES IN PNG FORMAT //////////////////////////////////////////
 
