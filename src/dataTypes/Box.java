@@ -45,7 +45,7 @@ public class Box extends Surface {
 	public Intersection intersect(Vec3D origin, Vec3D ray) {
 		Intersection inter=null;
 		for (Plane plane : planes) {
-			inter = Intersection.getFirst(inter, plane.intersect(ray, origin));	
+			inter = Intersection.getFirst(inter, plane.intersect(origin, ray));	
 		}
 		return inter;
 	}
