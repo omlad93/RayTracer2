@@ -88,8 +88,13 @@ class auxiliary {
 		return new Light(position, color, specularIntens, shadowIntens, r);
 	}
 
-	
-	
-	
+	public static void storeColor(byte[] png2be, Vec rgb, int idx ) {
+		
+		png2be[idx]  = (byte) (255*rgb.getV1());
+		png2be[idx+1]= (byte) (255*rgb.getV2());
+		png2be[idx+2]= (byte) (255*rgb.getV3());
+		
+		
+	}
 	
 }

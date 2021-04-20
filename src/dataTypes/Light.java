@@ -9,7 +9,6 @@ public class Light {
 	protected double radius;
 	
 	
-	
 	public Light(Vec pos, Vec col, double spec, double shadow, double r) {
 		position = pos;
 		color = col;
@@ -30,4 +29,5 @@ public class Light {
 	public Vec getNormalizedLightRay(Vec point) {
 		return Vec.createDistVec(position, point).normalized();
 	}
+
 }
