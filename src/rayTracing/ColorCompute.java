@@ -18,7 +18,7 @@ public class ColorCompute {
 		int recurtion = scene.getRecusion();
 		Vec3D color = getSimpleColor(intersection, cameraRay, scene);
 		color = calcShapeTransparency(intersection, cameraRay, scene, color);
-		return color.add(calcShapeReflection(intersection, cameraRay, scene, recurtion));
+		return color.add(calcShapeReflection(intersection, cameraRay, scene, recurtion)).clip();
 	}
 	
 	public static Vec3D getSimpleColor(Intersection intersection, Vec3D cameraRay, Scene scene) {
@@ -130,6 +130,9 @@ public class ColorCompute {
 		Vec3D[] uv = light.findPerpendicularPlane(currentLightRay);
 		int n = scene.getShadowN();
 		Grid grid = new Grid(light, n, uv);
+		if ((point == null) || (shape == null) || (grid == null)) {
+			System.out.println("aha!");
+		}
 		int numOfHits = calNumberOfHits(grid, point, shape, shapes, scene);
 		double percentage = (double) (numOfHits / (n * n));
 		double lightIntensity = (1 - light.ShadowIntensity()) + light.ShadowIntensity() * percentage;
@@ -154,8 +157,8 @@ public class ColorCompute {
 				currentRaySourcePosition = currentCellLeftPoint.add(currentRaySourcePosition);
 				currentCellRay = Vec3D.createDistVec(currentRaySourcePosition, point);
 				currentCellRay = currentCellRay.normalized();
-				Intersection intersection = scene.firstIntersectionOfRay(currentRaySourcePosition, currentCellRay, null);
-				if(intersection.getShape() == shape) {
+				Intersection intersection = scene.firstIntersectionOfRay(currentRaySourcePosition, currentCellRay, null);		
+				if(intersection != null && intersection.getShape() == shape) {
 					numOfHits++;
 				}
 			}
@@ -163,5 +166,6 @@ public class ColorCompute {
 		return numOfHits;
 		
 	}
+	
 
 }

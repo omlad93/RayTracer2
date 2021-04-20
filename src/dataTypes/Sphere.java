@@ -28,7 +28,7 @@ public class Sphere extends Surface{
 		Vec3D helper = origin.subtract(center);
 		ray = ray.normalized();
 		
-		double a = ray.dotProduct(ray);
+		double a = ray.dotProduct(ray); //
 		double b = 2*ray.dotProduct(helper);
 		double c = helper.dotProduct(helper) - Math.pow(radius,2); 
 		double d = Math.pow(b, 2) - 4*a*c;

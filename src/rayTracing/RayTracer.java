@@ -35,8 +35,9 @@ public class RayTracer {
 
 	/**
 	 * Runs the ray tracer. Takes scene file, output image file and image size as input.
+	 * @throws RayTracerException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RayTracerException {
 
 		try {
 
@@ -67,16 +68,16 @@ public class RayTracer {
 			
 			// Render scene:
 			tracer.renderScene(outputFileName);
-
-//		} catch (IOException e) {
+		
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+//		} catch (RayTracerException e) {
 //			System.out.println(e.getMessage());
-		} catch (RayTracerException e) {
-			System.out.println(e.getMessage());
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+//		} catch (Exception e) {
+//			System.out.println(e.getMessage());
+//		}
+
 		}
-
-
 	}
 
 	/**
@@ -94,7 +95,7 @@ public class RayTracer {
 
 		
 		System.out.println("Started parsing scene file " + sceneFileName);
-		System.out.println("PNG size is: " + imageHeight + "x" + imageWidth + "\n");
+		System.out.println("PNG size is: " + imageHeight + "x" + imageWidth);
 
 
 
@@ -120,7 +121,7 @@ public class RayTracer {
 				else if (code.equals("set")){
                                        
 					auxiliary.setParse(params,scene);
-//					System.out.println(String.format("Parsed general settings (line %d)", lineNum));
+//					ystem.out.println(String.format("Parsed general settings (line %d)", lineNum));
 				}
 				else if (code.equals("mtl"))
 				{

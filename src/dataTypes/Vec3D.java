@@ -34,22 +34,25 @@ public class Vec3D {
 			System.out.println("Unit Vector with wrong dim " + k);
 			System.exit(-3);
 		}
+		type = t;
 		
+		int sign = (k>0)? 1 : -1;
 		if (Math.abs(k)==1) {
-			v1 = k;
+			
+			v1 = sign;
 			v2 = 0;
 			v3 = 0;
-			type = t;
+
 		}else if (Math.abs(k)==2) {
 			v1 = 0;
-			v2 = k;
+			v2 = sign;
 			v3 = 0;
-			type = t;
+
 		}else if (Math.abs(k)==3) {
 			v1 = 0;
 			v2 = 0;
-			v3 = k;
-			type = t;
+			v3 = sign;
+
 		}
 	}
 	
@@ -64,7 +67,7 @@ public class Vec3D {
 			System.exit(-3);
 		}
 		double t1 = v2*other.v3 - v3*other.v2;
-		double t2 = v1*other.v3 - v3*other.v1;
+		double t2 = v3*other.v1 - v1*other.v3;
 		double t3 = v1*other.v2 - v2*other.v1;
 		Vec3D cross= new Vec3D(t1,t2,t3,type);
 		return cross;
@@ -151,6 +154,13 @@ public class Vec3D {
 	
 	public double getV3() {
 		return v3;
+	}
+	
+	public Vec3D clip() {
+		double t1 = Math.max(Math.min(1,v1),0);
+		double t2 = Math.max(Math.min(1,v2),0);
+		double t3 = Math.max(Math.min(1,v3),0);
+		return new Vec3D(t1,t2,t3,type);		
 	}
 	
 	public static Vec3D createDistVec(Vec3D source, Vec3D dest) {

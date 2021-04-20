@@ -106,28 +106,32 @@ public class Scene {
 		return first;
 	}
 	
+	/* get phi - angle with Right Axis */
 	public double getPhi(Vec3D pix) {
 		Vec3D delta = pix.subtract(screenCenter);
 		double phi = Math.atan(delta.getV2()/delta.getV1());
 		return phi;
 	}
 	
-	
-	/*
-	 * return Theta in degrees!
-	 */
+	/* get theta - angle with Towards axis */
 	public double calculateTheta(double Xif) {
+		double theta;
 		if ((focus < 0) && (focus >= -1)) {
-			return (1/focus)*Math.asin(focus*Xif/screen_dist);
+			theta = (1/focus)*Math.asin(focus*Xif/screen_dist);
 		}
 		else if (focus==0) {
-			return Xif/focus;
+			theta = Xif/screen_dist;
 		}
 		else{
-			return (1/focus)*Math.atan(focus*Xif/screen_dist);
+			theta =  (1/focus)*Math.atan(focus*Xif/screen_dist);
 		}
+		if (theta <0) {
+			theta += 2*Math.PI;
+		}
+		return theta;
 	}
 	
+	/* get distance of pixel on the screen plane from screen center */
 	public double getRadiusOnScreen(double theta) {
 		return screen_dist * Math.cos(theta);
 	}
@@ -137,18 +141,23 @@ public class Scene {
 		
 		double Xif = pix.subtract(screenCenter).getNorm();
 		double theta = calculateTheta(Xif);
-		double r = getRadiusOnScreen(theta);
-		double phi = getPhi(pix);
-		boolean rightOverFlow, upOverFlow;
-		Vec3D rightStep = right.multiply(r*Math.cos(phi));
-		Vec3D step = up.multiply(r*Math.sin(phi)).add(rightStep);
-		
-		Vec3D newPix = screenCenter.add(step);
-		rightOverFlow = right.dotProduct(step) > (width/2);
-		upOverFlow = up.dotProduct(step) > (hight/2);
-		if (upOverFlow || rightOverFlow) {
+		if (theta > Math.PI/2) {
 			return null;
 		}
+		
+		double Xip = getRadiusOnScreen(theta);
+//		double phi = getPhi(pix);
+		boolean rightOverFlow, upOverFlow;
+//		Vec3D rightStep = right.multiply(Xip*Math.cos(phi));
+//		Vec3D step = up.multiply(Xip*Math.sin(phi)).add(rightStep);
+		
+		Vec3D newPix = pix.subtract(screenCenter).normalized().multiply(Xip);
+//		rightOverFlow = right.dotProduct(step) > (width/2);
+//		upOverFlow = up.dotProduct(step) > (hight/2);
+//		if (upOverFlow || rightOverFlow) {
+//			return null;
+//		}
+
 		return newPix;
 
 	}
