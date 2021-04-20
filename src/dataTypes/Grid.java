@@ -31,6 +31,10 @@ public class Grid {
 		return this.numOfCells;
 	}
 	
+	public double getCellSize() {
+		return this.cellSize;
+	}
+	
 	public Vec3D getbottomLeftPoint() {
 		return this.bottomLeftPoint;
 	}

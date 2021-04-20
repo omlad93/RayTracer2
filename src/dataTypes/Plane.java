@@ -16,7 +16,7 @@ public class Plane extends Surface {
 
 	@Override
 	public Vec3D getNormalVec(Vec3D point) {
-		return normal;
+		return normal.normalized();
 	}
 
 	@Override

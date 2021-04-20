@@ -18,4 +18,12 @@ public class Material {
 		Transparency = trans;
 		name = "Material(" + i + ")";
 	}
+	
+	public Vec3D getReflectionColor() {
+		return this.reflection;
+	}
+	
+	public double getTransparency() {
+		return this.Transparency;
+	}
 }
