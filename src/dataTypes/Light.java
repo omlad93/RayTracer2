@@ -2,14 +2,14 @@ package dataTypes;
 
 public class Light {
 	
-	protected Vec position;
-	protected Vec color;
+	protected Vec3D position;
+	protected Vec3D color;
 	protected double specularIntensity;
 	protected double shadowIntensity;
 	protected double radius;
 	
 	
-	public Light(Vec pos, Vec col, double spec, double shadow, double r) {
+	public Light(Vec3D pos, Vec3D col, double spec, double shadow, double r) {
 		position = pos;
 		color = col;
 		specularIntensity = spec;
@@ -26,8 +26,8 @@ public class Light {
 		return specularIntensity;
 	}
 	
-	public Vec getNormalizedLightRay(Vec point) {
-		return Vec.createDistVec(position, point).normalized();
+	public Vec3D getNormalizedLightRay(Vec3D point) {
+		return Vec3D.createDistVec(position, point).normalized();
 	}
 
 }

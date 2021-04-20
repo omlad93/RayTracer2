@@ -2,14 +2,14 @@ package dataTypes;
 
 public class Material {
 	public int idx;
-	public Vec diffuse;
-	public Vec specular;
-	public Vec reflection;
+	public Vec3D diffuse;
+	public Vec3D specular;
+	public Vec3D reflection;
 	public double phong;
 	public double Transparency;
 	public String name;
 	
-	public Material(int i, Vec diff, Vec spec, Vec reflect, double phong_coeff, double trans) {
+	public Material(int i, Vec3D diff, Vec3D spec, Vec3D reflect, double phong_coeff, double trans) {
 		idx = i;
 		diffuse = diff;
 		specular = spec;

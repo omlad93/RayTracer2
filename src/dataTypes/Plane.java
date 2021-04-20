@@ -3,9 +3,9 @@ package dataTypes;
 public class Plane extends Surface {
 	
 	protected double offset;
-	protected Vec normal;
+	protected Vec3D normal;
 	
-	public Plane(Vec n, double D, Material mat, int idx) {
+	public Plane(Vec3D n, double D, Material mat, int idx) {
 		normal = n;
 		offset = D;
 		name = "Plane(" + idx + ")";
@@ -15,16 +15,17 @@ public class Plane extends Surface {
 
 
 	@Override
-	public Vec getNormalVec(Vec point) {
+	public Vec3D getNormalVec(Vec3D point) {
 		return normal;
 	}
 
 	@Override
-	public Intersection intersect(Vec ray, Vec origin) {
+	public Intersection intersect(Vec3D origin, Vec3D ray) {
+		ray = ray.normalized();
 		double dotProduct = ray.dotProduct(normal);
 		Intersection inter = null;
-		double t;
-		Vec po;
+		double t=0;
+		Vec3D po=null;
 		
 		if (dotProduct == 0) {
 			if (origin.dotProduct(normal) + offset == 0) {
@@ -32,11 +33,9 @@ public class Plane extends Surface {
 			}
 		}else {
 			po=normal.multiply(offset);
-			t = normal.dotProduct(po.subtract(origin))/dotProduct;
-			if (t>0) {
-				po = origin.add(ray.multiply(t));
-				inter = new Intersection(po, this,t);
-			}
+			t = (normal.dotProduct(po.subtract(origin)))/dotProduct;
+			Vec3D p = origin.add(ray.multiply(t));
+			inter = new Intersection(p, this, t);
 		}
 		
 		return inter;

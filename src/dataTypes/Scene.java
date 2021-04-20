@@ -13,22 +13,22 @@ public class Scene {
 	public LinkedList<Light> lights = new LinkedList<Light>();
 	
 	// screen parameters
-	protected Vec up = null;     // Y axis
-	protected Vec right= null; 	 // X axis 
-	protected Vec towards= null; // Z axis
+	protected Vec3D up = null;     // Y axis
+	protected Vec3D right= null; 	 // X axis 
+	protected Vec3D towards= null; // Z axis
 	protected double screen_dist=0,pixelSize=0, width=0, hight=0;
-	protected Vec dRight=null,dUp=null;
+	protected Vec3D dRight=null,dUp=null;
 	protected int xPixels=0, yPixels=0;
-	protected Vec screenCenter=null, bottomLeftCorner=null ,bottomLeftPixel=null;
+	protected Vec3D screenCenter=null, bottomLeftCorner=null ,bottomLeftPixel=null;
 	
 	//General Settings
-	protected Vec background = null;
+	protected Vec3D background = null;
 	protected int shadowN = 0;
 	protected int recursion = 0;
 	
 	
 	//camera eye parameters
-	protected Vec camPosition=null;
+	protected Vec3D camPosition=null;
 	protected double focus=0;
 	protected boolean fisheye=false;
 	
@@ -36,12 +36,12 @@ public class Scene {
 	public Scene() {
 	}
 	
-	public void updateCamera(Vec position, Vec lookat, Vec up_vec, double dist,
+	public void updateCamera(Vec3D position, Vec3D lookat, Vec3D up_vec, double dist,
 			double screen_width, double k, boolean fish) {
 		
 		towards = lookat.normalized();
-		up = up_vec.multiply(-1).normalized();
-		right = lookat.crossProduct(up).normalized();
+		up = up_vec.normalized();
+		right = (up.crossProduct(towards)).normalized();
 		camPosition = position;
 		fisheye = fish;
 		focus = k;
@@ -49,7 +49,7 @@ public class Scene {
 		screen_dist = dist;		
 	}
 	
-	public void updateSettings(Vec bkgrnd, int n, int rec) {
+	public void updateSettings(Vec3D bkgrnd, int n, int rec) {
 		recursion = 0;
 		shadowN=n;
 		background = bkgrnd;
@@ -64,31 +64,37 @@ public class Scene {
 		hight = pixelSize*yPixels;
 		dRight = right.multiply(pixelSize);
 		dUp = up.multiply(pixelSize);
-		screenCenter = towards.multiply(screen_dist);
+		screenCenter = camPosition.add(towards.multiply(screen_dist));
 		bottomLeftCorner = screenCenter.subtract(right.multiply(width).add(up.multiply(hight)).multiply(0.5));
 		bottomLeftPixel = bottomLeftCorner.add(dRight.multiply(0.5).add(dUp.multiply(0.5)));
-	
+
 	}
 
-	public Vec findPixleCenter(int stepsRight, int stepsUp) {
-		Vec delta = dRight.multiply(stepsRight).add(dUp.multiply(stepsUp));
-		return bottomLeftPixel.add(delta);
+	public Vec3D findPixleCenter(int stepsRight, int stepsUp) {
+		Vec3D deltaR = dRight.multiply(stepsRight);
+		Vec3D deltaU = dUp.multiply(stepsUp);
+		
+		return bottomLeftPixel.add(deltaR.add(deltaU));
 	}
 	
-	public Vec cameraPos() {
+	public Vec3D cameraPos() {
 		return camPosition;
 	}
 	
-	public Intersection firstIntersectionOfRay(Vec origin, Vec direction, Surface ignoreMe) {
-		Intersection inter1 = null;
+	public Vec3D getBackground() {
+		return background;
+	}
+	
+	public Intersection firstIntersectionOfRay(Vec3D origin, Vec3D direction, Surface ignoreMe) {
+		Intersection first = null;
 		for (Surface shape : shapes) {
 			if ((ignoreMe != null) && (ignoreMe == shape)) {
 				continue;
 			}
-				Intersection inter2 = shape.intersect(direction, origin);
-				inter1 = Intersection.getFirst(inter1, inter2);
+				Intersection inter2 = shape.intersect(origin, direction);
+				first = Intersection.getFirst(first, inter2);
 		}	
-		return inter1;
+		return first;
 	}
 	
 

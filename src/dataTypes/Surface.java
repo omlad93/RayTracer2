@@ -9,19 +9,19 @@ public abstract class Surface {
 		return this.material;
 	}
 	
-	public abstract Vec getNormalVec(Vec point);
+	public abstract Vec3D getNormalVec(Vec3D point);
 	
-	public abstract Intersection intersect(Vec ray, Vec origin);
+	public abstract Intersection intersect( Vec3D origin,Vec3D ray);
 	
-	public Vec specularColor() {
+	public Vec3D specularColor() {
 		return material.specular;
 	}
 	
-	public Vec diffuseColor() {
+	public Vec3D diffuseColor() {
 		return material.diffuse;
 	}
 	
-	public Vec reflectionColor() {
+	public Vec3D reflectionColor() {
 		return material.reflection;
 	}
 	

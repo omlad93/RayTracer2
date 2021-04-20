@@ -1,11 +1,11 @@
 package dataTypes;
 
 public class Intersection {
-	private Vec point;
+	private Vec3D point;
 	private double t;
 	private Surface shape;
 	
-	public Intersection(Vec intersectionPoint, Surface hitSurface, double length) {
+	public Intersection(Vec3D intersectionPoint, Surface hitSurface, double length) {
 		point = intersectionPoint;
 		t = length;
 		shape = hitSurface;
@@ -15,7 +15,7 @@ public class Intersection {
 		return t>0;
 	}
 	
-	public Vec getPoint() {
+	public Vec3D getPoint() {
 		if(isValid()) {
 			return point;
 		}else {
@@ -32,26 +32,35 @@ public class Intersection {
 	}
 	
 	public static Intersection getFirst(Intersection a, Intersection b) {
-		if (a == null) {
+		if ((a == null) && (b == null)) {
+			return null;
+		}
+		else if (a == null) {
 			if (b.isValid()) {
 				return b;
 			}else {
 			return null;
 			}
 		}
-		if (b == null) {
+		else if (b == null) {
 			if (a.isValid()) {
 				return a;
 			}else {
 			return null;
 			}
 		}
-		if ((a.getT() < b.getT()) && a.isValid() ) {
-			return a;			
-		}else if (b.isValid()) {
-			return b;
-		}else {
+		
+		else if (!a.isValid() && !b.isValid())
 			return null;
-		}
+		else if (a.isValid() &&  !b.isValid())
+			return a;
+		else if (b.isValid() && !a.isValid())
+			return b;
+		//both valid
+		else if (a.getT() < b.getT())
+			return a;
+		return b;
+		
 	}
+
 }
