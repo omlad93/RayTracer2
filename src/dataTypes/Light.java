@@ -34,6 +34,10 @@ public class Light {
 		return this.position;
 	}
 	
+	public Vec3D getColor() {
+		return color;
+	}
+	
 	public double getRadius() {
 		return this.radius;
 	}

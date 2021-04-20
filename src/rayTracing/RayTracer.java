@@ -1,5 +1,6 @@
 package rayTracing;
 
+
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -193,7 +194,7 @@ public class RayTracer {
 				if (hit == null)
 					color = scene.getBackground();
 				else
-					color = hit.getShape().diffuseColor();
+					color = ColorCompute.getColor(hit, cameraRay, scene);
 				auxiliary.storeColor(rgbData, color, colorIdx);
 			}
 			

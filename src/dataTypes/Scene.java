@@ -81,6 +81,14 @@ public class Scene {
 		return camPosition;
 	}
 	
+	public int getShadowN() {
+		return shadowN;
+	}
+	
+	public int getRecusion() {
+		return recursion;
+	}
+	
 	public Vec3D getBackground() {
 		return background;
 	}
