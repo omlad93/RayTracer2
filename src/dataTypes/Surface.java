@@ -3,6 +3,7 @@ package dataTypes;
 public abstract class Surface {
 	public Material material;
 	protected String name;
+	protected int idx; 
 	
 	public Material getMaterial() {
 		return this.material;
@@ -31,5 +32,10 @@ public abstract class Surface {
 	public double Transparency() {
 		return material.Transparency;
 	}
+	
+	public int comapreTo(Surface otherSurface) {
+		return Integer.compare(idx, otherSurface.idx);
+	}
+	
 	
 }

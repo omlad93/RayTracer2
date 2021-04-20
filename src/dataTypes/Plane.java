@@ -10,6 +10,7 @@ public class Plane extends Surface {
 		offset = D;
 		name = "Plane(" + idx + ")";
 		material = mat;
+		this.idx = idx;
 	}
 
 

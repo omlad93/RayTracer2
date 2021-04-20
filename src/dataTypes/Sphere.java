@@ -11,6 +11,7 @@ public class Sphere extends Surface{
 		radius = r;
 		material = mat;
 		name = "Sphere(" + idx + ")";
+		this.idx = idx;
 	}
 	
 	@Override
