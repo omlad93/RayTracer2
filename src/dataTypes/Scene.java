@@ -70,9 +70,10 @@ public class Scene {
 		return camPosition;
 	}
 	
-	public Intersection getFirstIntersection(Vec ray) {
-		
+	public Intersection Intersection(Vec origin, Vec direction, Surface ignoreMe ) {
 		
 		return null;
 	}
+	
+
 }
