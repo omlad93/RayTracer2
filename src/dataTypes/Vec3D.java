@@ -12,6 +12,12 @@ public class Vec3D {
 	private double v3;
 	private String type;
 	
+	
+	private static double zero = (double)0;
+	private static double max = (double)1;
+	public static Vec3D black = new Vec3D(zero,zero,zero, "RGB");
+	public static Vec3D white = new Vec3D(max,max,max,"RGB");
+
 	/*
 	 * Constructor
 	 * t might be and RGB or XYZ 

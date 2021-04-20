@@ -62,7 +62,6 @@ public class RayTracer {
 			tracer.parseScene(sceneFileName);
 
 			tracer.scene.setUp(tracer.imageWidth, tracer.imageWidth, sceneFileName);
-			System.out.println("scene is up");
 
 			
 			// Render scene:
@@ -94,6 +93,7 @@ public class RayTracer {
 
 		
 		System.out.println("Started parsing scene file " + sceneFileName);
+		System.out.println("PNG size is: " + imageHeight + "x" + imageWidth + "\n");
 
 
 
@@ -168,7 +168,7 @@ public class RayTracer {
 	public void renderScene(String outputFileName)
 	{
 		long startTime = System.currentTimeMillis();
-
+		int k =0;
 		// Create a byte array to hold the pixel data:
 		byte[] rgbData = new byte[this.imageWidth * this.imageHeight * 3];
 
@@ -184,16 +184,23 @@ public class RayTracer {
 		
 		for (int i=0; i<imageHeight; i++) { //rows
 			for (int j=0; j< imageWidth; j++) { //columns
+				int colorIdx = 3*(i + j*imageHeight);
 				Vec3D color;
 				Vec3D pixel = scene.findPixleCenter(i, j);
+				if (pixel == null) {
+					color = Vec3D.black;
+					auxiliary.storeColor(rgbData, color, colorIdx);
+					continue;
+				}
 				Vec3D cameraRay = Vec3D.createDistVec(scene.cameraPos(), pixel).normalized();
 				Intersection hit = scene.firstIntersectionOfRay(pixel, cameraRay, null);
+				
 				//get color
-				int colorIdx = 3*(i*imageWidth + j);
 				if (hit == null)
 					color = scene.getBackground();
 				else
 					color = hit.getShape().diffuseColor();
+				
 				auxiliary.storeColor(rgbData, color, colorIdx);
 			}
 			
