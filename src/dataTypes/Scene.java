@@ -1,7 +1,5 @@
 package dataTypes;
-
 import java.util.LinkedList;
-
 
 
 public class Scene {
@@ -41,7 +39,7 @@ public class Scene {
 		
 		towards = lookat.normalized();
 		up = up_vec.normalized();
-		right = (up.crossProduct(towards)).normalized();
+		right = (towards.crossProduct(up)).normalized();
 		camPosition = position;
 		fisheye = fish;
 		focus = k;
@@ -73,8 +71,11 @@ public class Scene {
 	public Vec3D findPixleCenter(int stepsRight, int stepsUp) {
 		Vec3D deltaR = dRight.multiply(stepsRight);
 		Vec3D deltaU = dUp.multiply(stepsUp);
-		
-		return bottomLeftPixel.add(deltaR.add(deltaU));
+		Vec3D pixel = bottomLeftPixel.add(deltaR.add(deltaU));
+		if (fisheye) {
+			pixel = getFishPix(pixel);
+		}
+		return pixel;
 	}
 	
 	public Vec3D cameraPos() {
@@ -105,5 +106,51 @@ public class Scene {
 		return first;
 	}
 	
+	public double getPhi(Vec3D pix) {
+		Vec3D delta = pix.subtract(screenCenter);
+		double phi = Math.atan(delta.getV2()/delta.getV1());
+		return phi;
+	}
+	
+	
+	/*
+	 * return Theta in degrees!
+	 */
+	public double calculateTheta(double Xif) {
+		if ((focus < 0) && (focus >= -1)) {
+			return (1/focus)*Math.asin(focus*Xif/screen_dist);
+		}
+		else if (focus==0) {
+			return Xif/focus;
+		}
+		else{
+			return (1/focus)*Math.atan(focus*Xif/screen_dist);
+		}
+	}
+	
+	public double getRadiusOnScreen(double theta) {
+		return screen_dist * Math.cos(theta);
+	}
+	
+
+	public Vec3D getFishPix(Vec3D pix) {
+		
+		double Xif = pix.subtract(screenCenter).getNorm();
+		double theta = calculateTheta(Xif);
+		double r = getRadiusOnScreen(theta);
+		double phi = getPhi(pix);
+		boolean rightOverFlow, upOverFlow;
+		Vec3D rightStep = right.multiply(r*Math.cos(phi));
+		Vec3D step = up.multiply(r*Math.sin(phi)).add(rightStep);
+		
+		Vec3D newPix = screenCenter.add(step);
+		rightOverFlow = right.dotProduct(step) > (width/2);
+		upOverFlow = up.dotProduct(step) > (hight/2);
+		if (upOverFlow || rightOverFlow) {
+			return null;
+		}
+		return newPix;
+
+	}
 
 }

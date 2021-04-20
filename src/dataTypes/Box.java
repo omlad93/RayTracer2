@@ -18,7 +18,7 @@ public class Box extends Surface {
 		Vec3D unitVec, p;
 		double d;
 		
-		for (int k=-3 ; k<=6 ; k++) {
+		for (int k=-3 ; k<=3 ; k++) {
 			if (k != 0) {
 				unitVec = new Vec3D(k,"XYZ"); //normal
 				p = center.add(unitVec.multiply(len/2)); //point on plane
@@ -40,14 +40,33 @@ public class Box extends Surface {
 		}
 		return null;
 	}
-
+	
+	public boolean inBox(Vec3D point) {
+		Vec3D dist = point.subtract(center);
+		if (Math.abs(dist.getV1()) > edgeLen/2) {
+			return false;
+		}
+		else if (Math.abs(dist.getV2()) > edgeLen/2) {
+			return false;
+		}
+		else if (Math.abs(dist.getV3()) > edgeLen/2) {
+			return false;
+		}
+		return true;
+		
+		
+	}
+	
 	@Override
 	public Intersection intersect(Vec3D origin, Vec3D ray) {
-		Intersection inter=null;
+		Intersection inter=null, real=null;
 		for (Plane plane : planes) {
-			inter = Intersection.getFirst(inter, plane.intersect(origin, ray));	
+			inter = Intersection.getFirst(inter, plane.intersect(origin, ray));
+			if (inBox(inter.getPoint())) {
+				 real = inter;
+			}
 		}
-		return inter;
+		return real;
 	}
 	
 }
