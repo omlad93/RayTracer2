@@ -1,21 +1,30 @@
 package dataTypes;
 
+import java.util.LinkedList;
+
+
+
 public class Scene {
 	String name;
 	
+	// objects & lights
+	public LinkedList<Material> materials = new LinkedList<Material>();
+	public LinkedList<Surface> shapes = new LinkedList<Surface>();
+	public LinkedList<Light> lights = new LinkedList<Light>();
+	
 	// screen parameters
-	protected Vec up = null;
-	protected Vec right= null;
-	protected Vec towards= null;
-	protected double screen_dist=0,pixelSize=0, width=0,hight=0;
+	protected Vec up = null;     // Y axis
+	protected Vec right= null; 	 // X axis 
+	protected Vec towards= null; // Z axis
+	protected double screen_dist=0,pixelSize=0, width=0, hight=0;
 	protected Vec dRight=null,dUp=null;
 	protected int xPixels=0, yPixels=0;
 	protected Vec screenCenter=null, bottomLeftCorner=null ,bottomLeftPixel=null;
 	
 	//General Settings
-	protected Vec background =null;
-	protected int shadowN =0;
-	protected int recursion=0;
+	protected Vec background = null;
+	protected int shadowN = 0;
+	protected int recursion = 0;
 	
 	
 	//camera eye parameters
@@ -70,9 +79,16 @@ public class Scene {
 		return camPosition;
 	}
 	
-	public Intersection Intersection(Vec origin, Vec direction, Surface ignoreMe ) {
-		
-		return null;
+	public Intersection firstIntersectionOfRay(Vec origin, Vec direction, Surface ignoreMe) {
+		Intersection inter1 = null;
+		for (Surface shape : shapes) {
+			if ((ignoreMe != null) && (ignoreMe == shape)) {
+				continue;
+			}
+				Intersection inter2 = shape.intersect(direction, origin);
+				inter1 = Intersection.getFirst(inter1, inter2);
+		}	
+		return inter1;
 	}
 	
 

@@ -48,7 +48,6 @@ public class Vec {
 	}
 	
 	
-	
 	/*
 	 * Vector Arithmetics
 	 */
@@ -64,7 +63,6 @@ public class Vec {
 		return new Vec(t1,t2,t3,type);
 		
 	}
-	
 	
 	public double dotProduct(Vec other) {
 		if (type != other.type) {
@@ -118,22 +116,35 @@ public class Vec {
 		return (v1*v1)+(v2*v2)+(v3*v3);
 	}
 	
-	
 	public String getType() {
 		return type;
 	}
 	
 	public String str() {
 		String prefix = type;
-		String values = "(" + v1 + v2 + v3 + ")";
+		String values = "(" + v1 + "," + v2+ "," + v3 + ")";
 		return new String(prefix + values);
 	}
+	
+	public double getV1() {
+		return v1;
+	}
+	
+	public double getV2() {
+		return v2;
+	}
+	
+	public double getV3() {
+		return v3;
+	}
+	
 	
 	public static Vec createDistVec(Vec source, Vec dist) {
 		return dist.subtract(source);
 	}
-	public static Vec perfromSteps(Vec startPoint ,int stepsRight, int stepsUp) {
-		return null;
-	}
+
+	
+	
+	
 	
 }

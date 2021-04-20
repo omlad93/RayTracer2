@@ -16,14 +16,10 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import java.util.LinkedList;
 
-import dataTypes.Material;
 import dataTypes.Scene;
-import dataTypes.Surface;
 import dataTypes.Vec;
 import dataTypes.Intersection;
-import dataTypes.Light;
 
 
 /**
@@ -34,9 +30,7 @@ public class RayTracer {
 	public int imageWidth;
 	public int imageHeight;
 	public Scene scene;
-	LinkedList<Material> materials = new LinkedList<Material>();
-	LinkedList<Surface> shapes = new LinkedList<Surface>();
-	LinkedList<Light> lights = new LinkedList<Light>();
+
 
 	/**
 	 * Runs the ray tracer. Takes scene file, output image file and image size as input.
@@ -127,32 +121,32 @@ public class RayTracer {
 				}
 				else if (code.equals("mtl"))
 				{
-                    materials.add(auxiliary.parseMaterial(params, materialIdx));
+                    scene.materials.add(auxiliary.parseMaterial(params, materialIdx));
                     materialIdx ++;
 					System.out.println(String.format("Parsed material (line %d)", lineNum));
 				}
 				else if (code.equals("sph"))
 				{
-					shapes.add(auxiliary.parseSphere(params, surfaceIdx, materials));
+					scene.shapes.add(auxiliary.parseSphere(params, surfaceIdx, scene.materials));
 					surfaceIdx++;
 					System.out.println(String.format("Parsed sphere (line %d)", lineNum));
 				}
 				else if (code.equals("pln"))
 				{
-					shapes.add(auxiliary.parsePlane(params, surfaceIdx, materials));
+					scene.shapes.add(auxiliary.parsePlane(params, surfaceIdx, scene.materials));
 					surfaceIdx++;
 					System.out.println(String.format("Parsed plane (line %d)", lineNum));
 				}
 				else if (code.equals("box"))
 				{
-					shapes.add(auxiliary.parseBox(params, surfaceIdx, materials));
+					scene.shapes.add(auxiliary.parseBox(params, surfaceIdx, scene.materials));
 					surfaceIdx++;
 					System.out.println(String.format("Parsed plane (line %d)", lineNum));
 				}
 				else if (code.equals("lgt"))
 				{
 
-					lights.add(auxiliary.parseLight(params));
+					scene.lights.add(auxiliary.parseLight(params));
 					System.out.println(String.format("Parsed light (line %d)", lineNum));
 				}
 				else
@@ -191,7 +185,10 @@ public class RayTracer {
 			for (int j=0; j< imageWidth; j++) {
 				Vec pixel = scene.findPixleCenter(i, j);
 				Vec cameraRay = Vec.createDistVec(scene.cameraPos(), pixel);
-				//get first ray intersection
+				Intersection hit = scene.firstIntersectionOfRay(cameraRay, pixel, null);
+				//get color
+				Vec color = hit.getShape().diffuseColor();
+				//
 				//store to rgbData
 			}
 			
