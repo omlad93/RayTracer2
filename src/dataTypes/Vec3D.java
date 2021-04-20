@@ -1,11 +1,5 @@
 package dataTypes;
 
-
-
-
-/*
- * a 3d vector which can be RGB / XYZ
- */
 public class Vec3D {
 	private double v1;
 	private double v2;
@@ -48,6 +42,7 @@ public class Vec3D {
 	}
 	
 	
+	
 	/*
 	 * Vector Arithmetics
 	 */
@@ -60,10 +55,10 @@ public class Vec3D {
 		double t1 = v2*other.v3 - v3*other.v2;
 		double t2 = v1*other.v3 - v3*other.v1;
 		double t3 = v1*other.v2 - v2*other.v1;
-		Vec3D cross= new Vec3D(t1,t2,t3,type);
-		return cross;
+		return new Vec3D(t1,t2,t3,type);
 		
 	}
+	
 	
 	public double dotProduct(Vec3D other) {
 		if (type != other.type) {
@@ -106,24 +101,17 @@ public class Vec3D {
 	}
 	
 	public double getNorm() {
-		double norm = Math.sqrt(this.dotProduct(this));
-		return norm;
+		return Math.sqrt(this.dotProduct(this));
 	}
 	
 	public Vec3D normalized() {
-		double factor = 1/getNorm();
-		if (factor == Double.POSITIVE_INFINITY){
-			return this;
-		}
-		Vec3D normalized = multiply(factor);
-		return normalized;
+		return this.multiply(1/this.getNorm());
 	}
 	
-	
-
 	public double squared() {
 		return (v1*v1)+(v2*v2)+(v3*v3);
 	}
+	
 	
 	public String getType() {
 		return type;
@@ -131,7 +119,7 @@ public class Vec3D {
 	
 	public String str() {
 		String prefix = type;
-		String values = "(" + v1 + "," + v2+ "," + v3 + ")";
+		String values = "(" + v1 + v2 + v3 + ")";
 		return new String(prefix + values);
 	}
 	
@@ -147,13 +135,12 @@ public class Vec3D {
 		return v3;
 	}
 	
-	public static Vec3D createDistVec(Vec3D source, Vec3D dest) {
-		return dest.subtract(source);
+	
+	public static Vec3D createDistVec(Vec3D source, Vec3D dist) {
+		return dist.subtract(source);
 	}
-	
+	public static Vec3D perfromSteps(Vec3D startPoint ,int stepsRight, int stepsUp) {
+		return null;
+	}
 
-	
-	
-	
-	
 }

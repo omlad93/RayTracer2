@@ -79,6 +79,14 @@ public class Vec2D {
 		return new String(values);
 	}
 	
+	public double getV1() {
+		return v1;
+	}
+	
+	public double getV2() {
+		return v2;
+	}
+	
 	public static Vec2D createDistVec(Vec2D source, Vec2D dist) {
 		return dist.subtract(source);
 	}

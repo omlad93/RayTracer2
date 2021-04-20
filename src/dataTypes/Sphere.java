@@ -15,49 +15,52 @@ public class Sphere extends Surface{
 	}
 	
 	@Override
-	public Vec3D getNormalVec(Vec3D point) {
+	public Vec3D getNormalVec3D(Vec3D point) {
 		Vec3D r = Vec3D.createDistVec(point, center);
 		return r.normalized();
 	}
 	
 	@Override
-	public Intersection intersect( Vec3D origin, Vec3D ray) {
+	public Intersection intersect(Vec3D ray, Vec3D origin) {
 		double t1,t2;
-		Intersection inter = null;
+		Intersection inter;
 		Vec3D point;
 		Vec3D helper = origin.subtract(center);
-		ray = ray.normalized();
-		
-		double a = ray.dotProduct(ray);
+		double a = ray.squared();
 		double b = 2*ray.dotProduct(helper);
-		double c = helper.dotProduct(helper) - Math.pow(radius,2); 
-		double d = Math.pow(b, 2) - 4*a*c;
+		double c = helper.squared() - Math.pow(radius,2); 
+		double d = Math.pow(b, 2)-4*a*c;
 		
 		if (d<0) {
-			
-		}
-		else if (d==0) {
-			t1 = -(b / (2*a));
+			return null;
+		} else if (d==0) {
+			t1 = -b /(2*a);
 			point = origin.add(ray.multiply(t1));
 			inter = new Intersection(point,this,t1);
-	
+			return inter;
+		}else {
+			t1 = (Math.sqrt(d)-b)/(2*a);
+			t2 = -(Math.sqrt(d)+b)/(2*a);
+			if ((t1<t2) && t1>0) {
+				point = origin.add(ray.multiply(t1));
+				inter = new Intersection(point,this,t1);
+				return inter;
+			}else if (t2>0) {
+				point = origin.add(ray.multiply(t1));
+				inter = new Intersection(point,this,t2);
+				return inter;
+			}else {
+				return null;
+			}	
 		}
-		else {
-			double sq = Math.sqrt(d);
-			t1 = (sq-b)/(2*a);
-			t2 = -(sq+b)/(2*a);
-			double[] t = (t1<t2) ? new double[]{t1,t2} : new double[]{t2,t1};
-			
-			if (t[0] > 0) {
-				t1 =t[0];
-			}
-			else if (t2 > 0 ) {
-				t1= t[1];
-			}
-			point = origin.add(ray.multiply(t1));
-			inter = new Intersection(point,this,t1);
-				
-		}
-		return inter;
 	}
+
+
+
+	
+	
+
+
+	
+
 }

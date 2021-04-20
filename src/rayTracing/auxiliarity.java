@@ -27,8 +27,7 @@ class auxiliary {
 	
 	public static void camParse(String[] p, Scene scene) {
 		Vec3D position = new Vec3D(dbl(p[0]), dbl(p[1]), dbl(p[2]), "XYZ");
-		Vec3D lookatPoint = new Vec3D(dbl(p[3]), dbl(p[4]),dbl(p[5]),"XYZ");
-		Vec3D lookat = Vec3D.createDistVec(position, lookatPoint);
+		Vec3D lookat = new Vec3D(dbl(p[3]), dbl(p[4]),dbl(p[5]),"XYZ");
 		Vec3D up = new Vec3D(dbl(p[6]), dbl(p[7]),dbl(p[8]),"XYZ");
 		double distance = dbl(p[9]);
 		double width = dbl(p[10]);

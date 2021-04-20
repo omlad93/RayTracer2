@@ -36,12 +36,12 @@ public class Scene {
 	public Scene() {
 	}
 	
-	public void updateCamera(Vec3D position, Vec3D lookat, Vec3D up_vec, double dist,
+	public void updateCamera(Vec3D position, Vec3D lookat, Vec3D up_Vec3D, double dist,
 			double screen_width, double k, boolean fish) {
 		
 		towards = lookat.normalized();
-		up = up_vec.normalized();
-		right = (up.crossProduct(towards)).normalized();
+		up = up_Vec3D.multiply(-1).normalized();
+		right = lookat.crossProduct(up).normalized();
 		camPosition = position;
 		fisheye = fish;
 		focus = k;
@@ -64,17 +64,15 @@ public class Scene {
 		hight = pixelSize*yPixels;
 		dRight = right.multiply(pixelSize);
 		dUp = up.multiply(pixelSize);
-		screenCenter = camPosition.add(towards.multiply(screen_dist));
+		screenCenter = towards.multiply(screen_dist);
 		bottomLeftCorner = screenCenter.subtract(right.multiply(width).add(up.multiply(hight)).multiply(0.5));
 		bottomLeftPixel = bottomLeftCorner.add(dRight.multiply(0.5).add(dUp.multiply(0.5)));
-
+	
 	}
 
 	public Vec3D findPixleCenter(int stepsRight, int stepsUp) {
-		Vec3D deltaR = dRight.multiply(stepsRight);
-		Vec3D deltaU = dUp.multiply(stepsUp);
-		
-		return bottomLeftPixel.add(deltaR.add(deltaU));
+		Vec3D delta = dRight.multiply(stepsRight).add(dUp.multiply(stepsUp));
+		return bottomLeftPixel.add(delta);
 	}
 	
 	public Vec3D cameraPos() {
@@ -85,16 +83,26 @@ public class Scene {
 		return background;
 	}
 	
+	public int getShadowN() {
+		return shadowN;
+	}
+	
+	public int getRecurtion() {
+		return recursion;
+	}
+	
+	
+	
 	public Intersection firstIntersectionOfRay(Vec3D origin, Vec3D direction, Surface ignoreMe) {
-		Intersection first = null;
+		Intersection inter1 = null;
 		for (Surface shape : shapes) {
 			if ((ignoreMe != null) && (ignoreMe == shape)) {
 				continue;
 			}
-				Intersection inter2 = shape.intersect(origin, direction);
-				first = Intersection.getFirst(first, inter2);
+				Intersection inter2 = shape.intersect(direction, origin);
+				inter1 = Intersection.getFirst(inter1, inter2);
 		}	
-		return first;
+		return inter1;
 	}
 	
 

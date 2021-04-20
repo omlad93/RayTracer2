@@ -15,17 +15,16 @@ public class Plane extends Surface {
 
 
 	@Override
-	public Vec3D getNormalVec(Vec3D point) {
+	public Vec3D getNormalVec3D(Vec3D point) {
 		return normal;
 	}
 
 	@Override
-	public Intersection intersect(Vec3D origin, Vec3D ray) {
-		ray = ray.normalized();
+	public Intersection intersect(Vec3D ray, Vec3D origin) {
 		double dotProduct = ray.dotProduct(normal);
 		Intersection inter = null;
-		double t=0;
-		Vec3D po=null;
+		double t;
+		Vec3D po;
 		
 		if (dotProduct == 0) {
 			if (origin.dotProduct(normal) + offset == 0) {
@@ -33,9 +32,11 @@ public class Plane extends Surface {
 			}
 		}else {
 			po=normal.multiply(offset);
-			t = (normal.dotProduct(po.subtract(origin)))/dotProduct;
-			Vec3D p = origin.add(ray.multiply(t));
-			inter = new Intersection(p, this, t);
+			t = normal.dotProduct(po.subtract(origin))/dotProduct;
+			if (t>0) {
+				po = origin.add(ray.multiply(t));
+				inter = new Intersection(po, this,t);
+			}
 		}
 		
 		return inter;

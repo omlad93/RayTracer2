@@ -29,7 +29,7 @@ public class RayTracer {
 
 	public int imageWidth;
 	public int imageHeight;
-	public Scene scene = new Scene();
+	public Scene scene;
 
 
 	/**
@@ -60,11 +60,8 @@ public class RayTracer {
 
 			// Parse scene file:
 			tracer.parseScene(sceneFileName);
-
 			tracer.scene.setUp(tracer.imageWidth, tracer.imageWidth, sceneFileName);
-			System.out.println("scene is up");
 
-			
 			// Render scene:
 			tracer.renderScene(outputFileName);
 
@@ -90,6 +87,7 @@ public class RayTracer {
 		String line = null;
 		int lineNum = 0;
 		int materialIdx = 1, surfaceIdx=0;
+		Scene scene = new Scene();
 
 
 		
@@ -114,41 +112,42 @@ public class RayTracer {
 				if (code.equals("cam")){
                                         
 					auxiliary.camParse(params,scene);
-//					System.out.println(String.format("Parsed camera parameters (line %d)", lineNum));
+					System.out.println(String.format("Parsed camera parameters (line %d)", lineNum));
 				}
 				else if (code.equals("set")){
                                        
 					auxiliary.setParse(params,scene);
-//					System.out.println(String.format("Parsed general settings (line %d)", lineNum));
+					System.out.println(String.format("Parsed general settings (line %d)", lineNum));
 				}
 				else if (code.equals("mtl"))
 				{
                     scene.materials.add(auxiliary.parseMaterial(params, materialIdx));
                     materialIdx ++;
-//					System.out.println(String.format("Parsed material (line %d)", lineNum));
+					System.out.println(String.format("Parsed material (line %d)", lineNum));
 				}
 				else if (code.equals("sph"))
 				{
 					scene.shapes.add(auxiliary.parseSphere(params, surfaceIdx, scene.materials));
 					surfaceIdx++;
-//					System.out.println(String.format("Parsed sphere (line %d)", lineNum));
+					System.out.println(String.format("Parsed sphere (line %d)", lineNum));
 				}
 				else if (code.equals("pln"))
 				{
 					scene.shapes.add(auxiliary.parsePlane(params, surfaceIdx, scene.materials));
 					surfaceIdx++;
-//					System.out.println(String.format("Parsed plane (line %d)", lineNum));
+					System.out.println(String.format("Parsed plane (line %d)", lineNum));
 				}
 				else if (code.equals("box"))
 				{
 					scene.shapes.add(auxiliary.parseBox(params, surfaceIdx, scene.materials));
 					surfaceIdx++;
-//					System.out.println(String.format("Parsed plane (line %d)", lineNum));
+					System.out.println(String.format("Parsed plane (line %d)", lineNum));
 				}
 				else if (code.equals("lgt"))
 				{
+
 					scene.lights.add(auxiliary.parseLight(params));
-//					System.out.println(String.format("Parsed light (line %d)", lineNum));
+					System.out.println(String.format("Parsed light (line %d)", lineNum));
 				}
 				else
 				{
@@ -157,7 +156,7 @@ public class RayTracer {
 			}
 		}
 
-		r.close();
+
 		System.out.println("Finished parsing scene file " + sceneFileName);
 
 	}
@@ -182,30 +181,25 @@ public class RayTracer {
                 //
                 // Each of the red, green and blue components should be a byte, i.e. 0-255
 		
-		for (int i=0; i<imageHeight; i++) { //rows
-			for (int j=0; j< imageWidth; j++) { //columns
-				Vec3D color;
+		for (int i=0; i<imageHeight; i++) {
+			for (int j=0; j< imageWidth; j++) {
 				Vec3D pixel = scene.findPixleCenter(i, j);
-				Vec3D cameraRay = Vec3D.createDistVec(scene.cameraPos(), pixel).normalized();
-				Intersection hit = scene.firstIntersectionOfRay(pixel, cameraRay, null);
+				Vec3D cameraRay = Vec3D.createDistVec(scene.cameraPos(), pixel);
+				Intersection hit = scene.firstIntersectionOfRay(cameraRay, pixel, null);
 				//get color
-				int colorIdx = 3*(i*imageWidth + j);
-				if (hit == null)
-					color = scene.getBackground();
-				else
-					color = hit.getShape().diffuseColor();
-				auxiliary.storeColor(rgbData, color, colorIdx);
+				Vec3D color = hit.getShape().diffuseColor();
+				//
+				//store to rgbData
 			}
 			
 		}
-		
 
 		long endTime = System.currentTimeMillis();
 		Long renderTime = endTime - startTime;
 
 		System.out.println("Finished rendering scene in " + renderTime.toString() + " milliseconds.");
 
-		// This is already implemented, and should work without adding any code.
+                // This is already implemented, and should work without adding any code.
 		saveImage(this.imageWidth, rgbData, outputFileName);
 
 		System.out.println("Saved file " + outputFileName);

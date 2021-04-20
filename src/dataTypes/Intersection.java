@@ -32,35 +32,26 @@ public class Intersection {
 	}
 	
 	public static Intersection getFirst(Intersection a, Intersection b) {
-		if ((a == null) && (b == null)) {
-			return null;
-		}
-		else if (a == null) {
+		if (a == null) {
 			if (b.isValid()) {
 				return b;
 			}else {
 			return null;
 			}
 		}
-		else if (b == null) {
+		if (b == null) {
 			if (a.isValid()) {
 				return a;
 			}else {
 			return null;
 			}
 		}
-		
-		else if (!a.isValid() && !b.isValid())
-			return null;
-		else if (a.isValid() &&  !b.isValid())
-			return a;
-		else if (b.isValid() && !a.isValid())
+		if ((a.getT() < b.getT()) && a.isValid() ) {
+			return a;			
+		}else if (b.isValid()) {
 			return b;
-		//both valid
-		else if (a.getT() < b.getT())
-			return a;
-		return b;
-		
+		}else {
+			return null;
+		}
 	}
-
 }
