@@ -14,7 +14,8 @@ public class Scene {
 	protected Vec3D up = null;     // Y axis
 	protected Vec3D right= null; 	 // X axis 
 	protected Vec3D towards= null; // Z axis
-	protected double screen_dist=0,pixelSize=0, width=0, hight=0;
+	protected double screen_dist=0, width=0, hight=0;
+	protected double pixelW,pixelH;
 	protected Vec3D dRight=null,dUp=null;
 	protected int xPixels=0, yPixels=0;
 	protected Vec3D screenCenter=null, bottomLeftCorner=null ,bottomLeftPixel=null;
@@ -38,8 +39,9 @@ public class Scene {
 			double screen_width, double k, boolean fish) {
 		
 		towards = lookat.normalized();
-		up = up_vec.normalized();
-		right = (towards.crossProduct(up)).normalized();
+		right = (up_vec.crossProduct(towards)).normalized();
+		up = towards.crossProduct(right).normalized().multiply(-1);
+
 		camPosition = position;
 		fisheye = fish;
 		focus = k;
@@ -58,20 +60,33 @@ public class Scene {
 		name = filename;
 		xPixels = xp;
 		yPixels = yp;
-		pixelSize = width/xp;
-		hight = pixelSize*yPixels;
-		dRight = right.multiply(pixelSize);
-		dUp = up.multiply(pixelSize);
+		pixelW = width/xp;
+		pixelH = pixelW * xp/yp;
+		hight = pixelH*yPixels;
+		dRight = right.multiply(pixelW);
+		dUp = up.multiply(pixelH);
 		screenCenter = camPosition.add(towards.multiply(screen_dist));
 		bottomLeftCorner = screenCenter.subtract(right.multiply(width).add(up.multiply(hight)).multiply(0.5));
 		bottomLeftPixel = bottomLeftCorner.add(dRight.multiply(0.5).add(dUp.multiply(0.5)));
 
 	}
 
-	public Vec3D findPixleCenter(int stepsRight, int stepsUp) {
-		Vec3D deltaR = dRight.multiply(stepsRight);
-		Vec3D deltaU = dUp.multiply(stepsUp);
-		Vec3D pixel = bottomLeftPixel.add(deltaR.add(deltaU));
+//	public Vec3D findPixleCenter(int stepsRight, int stepsUp) {
+//		Vec3D deltaR = dRight.multiply(stepsRight);
+//		Vec3D deltaU = dUp.multiply(stepsUp);
+//		Vec3D pixel = bottomLeftPixel.add(deltaR.add(deltaU));
+//		if (fisheye) {
+//			pixel = getFishPix(pixel);
+//		}
+//		return pixel;
+//	}
+	
+	public Vec3D findPixleCenter(int row, int col) {
+		double dr = pixelW*(col - 0.5) - hight/2;
+		double du = pixelH*(row - 0.5) - width/2;
+		Vec3D deltaR = right.multiply(dr);
+		Vec3D deltaU = up.multiply(du);
+		Vec3D pixel = screenCenter.add(deltaR.add(deltaU));
 		if (fisheye) {
 			pixel = getFishPix(pixel);
 		}
@@ -119,8 +134,8 @@ public class Scene {
 		if ((focus < 0) && (focus >= -1)) {
 			theta = (1/focus)*Math.asin(focus*Xif/screen_dist);
 		}
-		else if (focus==0) {
-			theta = Xif/screen_dist;
+		else if (Box.closeEnough(focus, 0)) {
+			theta = (Xif/screen_dist);
 		}
 		else{
 			theta =  (1/focus)*Math.atan(focus*Xif/screen_dist);

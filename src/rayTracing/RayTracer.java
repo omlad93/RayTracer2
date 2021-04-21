@@ -186,7 +186,7 @@ public class RayTracer {
 		
 		for (int i=0; i<imageHeight; i++) { //rows
 			for (int j=0; j< imageWidth; j++) { //columns
-				int colorIdx = 3*(i + j*imageHeight);
+				int colorIdx = 3*(i*imageWidth + j);
 				Vec3D color;
 				Vec3D pixel = scene.findPixleCenter(i, j);
 				if (pixel == null) {

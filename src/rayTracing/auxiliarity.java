@@ -29,7 +29,7 @@ class auxiliary {
 		Vec3D position = new Vec3D(dbl(p[0]), dbl(p[1]), dbl(p[2]), "XYZ");
 		Vec3D lookatPoint = new Vec3D(dbl(p[3]), dbl(p[4]),dbl(p[5]),"XYZ");
 		Vec3D lookat = Vec3D.createDistVec(position, lookatPoint);
-		Vec3D up = new Vec3D(dbl(p[6]), dbl(p[7]),dbl(p[8]),"XYZ").multiply(-1);
+		Vec3D up = new Vec3D(dbl(p[6]), dbl(p[7]),dbl(p[8]),"XYZ");
 		double distance = dbl(p[9]);
 		double width = dbl(p[10]);
 		boolean fish = p.length > 11 && bool(p[11]);
@@ -95,10 +95,10 @@ class auxiliary {
 	}
 
 	public static void storeColor(byte[] png2be, Vec3D rgb, int idx ) {
-		
-		png2be[idx]  = (byte) (255*rgb.getV1());
-		png2be[idx+1]= (byte) (255*rgb.getV2());
-		png2be[idx+2]= (byte) (255*rgb.getV3());
+		float normalizer = (float) 255.0;
+		png2be[idx]  = (byte) (normalizer*rgb.getV1());
+		png2be[idx+1]= (byte) (normalizer*rgb.getV2());
+		png2be[idx+2]= (byte) (normalizer*rgb.getV3());
 		
 		
 	}
