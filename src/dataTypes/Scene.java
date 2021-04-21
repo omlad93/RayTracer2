@@ -50,7 +50,7 @@ public class Scene {
 	}
 	
 	public void updateSettings(Vec3D bkgrnd, int n, int rec) {
-		recursion = 0;
+		recursion =rec;
 		shadowN=n;
 		background = bkgrnd;
 		
