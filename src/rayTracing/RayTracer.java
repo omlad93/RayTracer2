@@ -170,7 +170,6 @@ public class RayTracer {
 	public void renderScene(String outputFileName)
 	{
 		long startTime = System.currentTimeMillis();
-		int k =0;
 		// Create a byte array to hold the pixel data:
 		byte[] rgbData = new byte[this.imageWidth * this.imageHeight * 3];
 
@@ -199,15 +198,12 @@ public class RayTracer {
 				
 				//get color
 				if (hit == null)
+					// color = (scene.isFish())? Vec3D.white : scene.getBackground();
 					color = scene.getBackground();
-//				else if(scene.isFish()) {
-//					color = hit.getShape().diffuseColor() ;
-//				}
 				else
 					color = ColorCompute.getColor(hit, cameraRay, scene);
 			  auxiliary.storeColor(rgbData, color, colorIdx);
 			}
-			
 		}
 		
 
@@ -258,6 +254,11 @@ public class RayTracer {
 	}
 
 	public static class RayTracerException extends Exception {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public RayTracerException(String msg) {  super(msg); }
 	}
 

@@ -50,7 +50,7 @@ public class Scene {
 	}
 	
 	public void updateSettings(Vec3D bkgrnd, int n, int rec) {
-		recursion =rec;
+		recursion = rec;
 		shadowN=n;
 		background = bkgrnd;
 		
@@ -116,7 +116,7 @@ public class Scene {
 			if ((ignoreMe != null) && (ignoreMe == shape)) {
 				continue;
 			}
-				Intersection inter2 = shape.intersect(origin, direction);
+				Intersection inter2 = shape.intersect(origin, direction.normalized());
 				first = Intersection.getFirst(first, inter2);
 		}	
 		return first;
@@ -132,17 +132,18 @@ public class Scene {
 	/* get theta - angle with Towards axis */
 	public double calculateTheta(double Xif) {
 		double theta;
+		double factor = focus/screen_dist;
 		if ((focus < 0) && (focus >= -1)) {
-			theta = (1/focus)*Math.asin(focus*Xif/screen_dist);
+			theta = (1/focus)*Math.asin(factor*Xif);
 		}
 		else if (focus == 0) {
 			theta = (Xif/screen_dist);
 		}
 		else{
-			theta =  (1/focus)*Math.atan(focus*Xif/screen_dist);
+			theta =  (1/focus)*Math.atan(factor*Xif);
 		}
 		
-		if (theta <0) {
+		if (theta < 0) {
 			theta += 2*Math.PI;
 		}
 		return theta;
@@ -159,24 +160,13 @@ public class Scene {
 
 	public Vec3D getFishPix(Vec3D pix) {
 		
-		double Xif = pix.subtract(screenCenter).getNorm();
-		double theta = calculateTheta(Xif);
+		double Xif = pix.subtract(screenCenter).getNorm(); // pixel dist from screen
+		double theta = calculateTheta(Xif);				   // effective ray angle 
 		if (theta > Math.PI/2) {
-			return null;
-		}
-		
+			return null;	// ray will break and go caput
+		}	
 		double Xip = getXip(theta);
-//		double phi = getPhi(pix);
-//		boolean rightOverFlow, upOverFlow;
-//		Vec3D rightStep = right.multiply(Xip*Math.cos(phi));
-//		Vec3D step = up.multiply(Xip*Math.sin(phi)).add(rightStep);
 		Vec3D newPix = screenCenter.add(Vec3D.createDistVec(screenCenter, pix).normalized().multiply(Xip));
-		//Vec3D newPix = pix.subtract(screenCenter).normalized().multiply(Xip);
-//		rightOverFlow = right.dotProduct(step) > (width/2);
-//		upOverFlow = up.dotProduct(step) > (hight/2);
-//		if (upOverFlow || rightOverFlow) {
-//			return null;
-//		}
 
 		return newPix;
 

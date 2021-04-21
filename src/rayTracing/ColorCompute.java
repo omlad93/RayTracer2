@@ -19,10 +19,6 @@ public class ColorCompute {
 		Vec3D color = getSimpleColor(intersection, cameraRay, scene);
 		Vec3D trans = calcShapeTransparency(intersection, cameraRay, scene, color);
 		Vec3D reflect= calcShapeReflection(intersection, cameraRay, scene, recurtion);
-		if (reflect.isBlack() && intersection.getShape().reflectionColor().iswhite()) {
-//			System.out.print("Aha");
-		}
-
 		return trans.add(reflect).clip();
 	}
 	
@@ -53,15 +49,11 @@ public class ColorCompute {
 		Vec3D point = intersection.getPoint();
 		Surface shape = intersection.getShape();
 		Vec3D normal = intersection.getShape().getNormalVec(point);
-		Vec3D reflectionRay = ray.subtract(normal.multiply(2 * ray.dotProduct(normal)));
-				
+		Vec3D reflectionRay = ray.subtract(normal.multiply(2 * ray.dotProduct(normal)));		
 		Intersection newIntersection = scene.firstIntersectionOfRay(point, reflectionRay, shape);
 		Vec3D shapeColor = getSimpleColor(newIntersection, reflectionRay, scene);
 		shapeColor = calcShapeTransparency(newIntersection, reflectionRay, scene, shapeColor);
 		Vec3D reflectionColor =  calcShapeReflection(newIntersection, reflectionRay, scene, recurtion - 1);
-
-		if (shape.reflectionColor().multiply(reflectionColor.add(shapeColor)).isBlack())
-			System.out.print("Aha");
 		return shape.reflectionColor().multiply(reflectionColor.add(shapeColor));	
 	}
 	
@@ -147,24 +139,18 @@ public class ColorCompute {
 	
 	public static int calNumberOfHits(Grid grid, Vec3D point, Surface shape, LinkedList<Surface> shapes, Scene scene) {
 		Random rand = new Random();
-//		double rand_dub1;
-//		double rand_dub2;
 		Vec3D currentCellRay;
-		//Vec3D currentRaySourcePosition;
 		int numOfHits = 0;
 		int n = grid.getNumberOfCells();
+		
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < n; j++) {
 				Vec3D currentCellLeftPoint = grid.getbottomLeftPoint().add(grid.du().multiply(i).add(grid.dv().multiply(j)));
 				Vec3D uAddition = grid.du().multiply(rand.nextDouble()*grid.getCellSize());
 				Vec3D vAddition = grid.dv().multiply(rand.nextDouble()*grid.getCellSize());
-//				rand_dub1 = rand.nextDouble();
-//				rand_dub2 = rand.nextDouble();
-//				Vec3D currentRaySourcePosition = new Vec3D(rand_dub1 * grid.getCellSize(), rand_dub2 * grid.getCellSize(), 0.0, "XYZ");
-				
 				Vec3D currentRaySourcePosition = currentCellLeftPoint.add(uAddition).add(vAddition);
-				currentCellRay = Vec3D.createDistVec(currentRaySourcePosition, point);
-				currentCellRay = currentCellRay.normalized();
+				currentCellRay = Vec3D.createDistVec(currentRaySourcePosition, point).normalized();
+				
 				Intersection intersection = scene.firstIntersectionOfRay(currentRaySourcePosition, currentCellRay, null);		
 				if(intersection != null && intersection.getShape() == shape) {
 					numOfHits++;

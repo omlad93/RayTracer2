@@ -35,7 +35,7 @@ class auxiliary {
 		boolean fish = p.length > 11 && bool(p[11]);
 		double k = p.length == 13 ? dbl(p[12]) : 0.5;
 		if (fish)
-			System.out.println("\tfish eye enabled. focus =" + k);
+			System.out.println("\tfish eye enabled. (focus = " + k + ").");
 		else
 			System.out.println("\tnormal lens is in use.");
 
