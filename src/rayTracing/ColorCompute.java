@@ -60,7 +60,7 @@ public class ColorCompute {
 		shapeColor = calcShapeTransparency(newIntersection, reflectionRay, scene, shapeColor);
 		Vec3D reflectionColor =  calcShapeReflection(newIntersection, reflectionRay, scene, recurtion - 1);
 
-		if (shape.reflectionColor().multiply(reflectionColor.add(shapeColor)).isBlack() && shape.reflectionColor().iswhite())
+		if (shape.reflectionColor().multiply(reflectionColor.add(shapeColor)).isBlack())
 			System.out.print("Aha");
 		return shape.reflectionColor().multiply(reflectionColor.add(shapeColor));	
 	}
