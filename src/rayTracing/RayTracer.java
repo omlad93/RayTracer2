@@ -200,6 +200,9 @@ public class RayTracer {
 				//get color
 				if (hit == null)
 					color = scene.getBackground();
+//				else if(scene.isFish()) {
+//					color = hit.getShape().diffuseColor() ;
+//				}
 				else
 					color = ColorCompute.getColor(hit, cameraRay, scene);
 			  auxiliary.storeColor(rgbData, color, colorIdx);

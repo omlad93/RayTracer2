@@ -87,6 +87,7 @@ public class Scene {
 		Vec3D deltaR = right.multiply(dr);
 		Vec3D deltaU = up.multiply(du);
 		Vec3D pixel = screenCenter.add(deltaR.add(deltaU));
+		
 		if (fisheye) {
 			pixel = getFishPix(pixel);
 		}
@@ -134,12 +135,13 @@ public class Scene {
 		if ((focus < 0) && (focus >= -1)) {
 			theta = (1/focus)*Math.asin(focus*Xif/screen_dist);
 		}
-		else if (Box.closeEnough(focus, 0)) {
+		else if (focus == 0) {
 			theta = (Xif/screen_dist);
 		}
 		else{
 			theta =  (1/focus)*Math.atan(focus*Xif/screen_dist);
 		}
+		
 		if (theta <0) {
 			theta += 2*Math.PI;
 		}
@@ -147,10 +149,13 @@ public class Scene {
 	}
 	
 	/* get distance of pixel on the screen plane from screen center */
-	public double getRadiusOnScreen(double theta) {
-		return screen_dist * Math.cos(theta);
+	public double getXip(double theta) {
+		return screen_dist * Math.tan(theta);
 	}
 	
+	public boolean isFish() {
+		return fisheye;
+	}
 
 	public Vec3D getFishPix(Vec3D pix) {
 		
@@ -160,13 +165,13 @@ public class Scene {
 			return null;
 		}
 		
-		double Xip = getRadiusOnScreen(theta);
+		double Xip = getXip(theta);
 //		double phi = getPhi(pix);
-		boolean rightOverFlow, upOverFlow;
+//		boolean rightOverFlow, upOverFlow;
 //		Vec3D rightStep = right.multiply(Xip*Math.cos(phi));
 //		Vec3D step = up.multiply(Xip*Math.sin(phi)).add(rightStep);
-		
-		Vec3D newPix = pix.subtract(screenCenter).normalized().multiply(Xip);
+		Vec3D newPix = screenCenter.add(Vec3D.createDistVec(screenCenter, pix).normalized().multiply(Xip));
+		//Vec3D newPix = pix.subtract(screenCenter).normalized().multiply(Xip);
 //		rightOverFlow = right.dotProduct(step) > (width/2);
 //		upOverFlow = up.dotProduct(step) > (hight/2);
 //		if (upOverFlow || rightOverFlow) {

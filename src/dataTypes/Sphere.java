@@ -16,7 +16,7 @@ public class Sphere extends Surface{
 	
 	@Override
 	public Vec3D getNormalVec(Vec3D point) {
-		Vec3D r = Vec3D.createDistVec(point, center);
+		Vec3D r = Vec3D.createDistVec(center, point);
 		return r.normalized();
 	}
 	
