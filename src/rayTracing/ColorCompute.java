@@ -17,15 +17,20 @@ public class ColorCompute {
 	public static Vec3D getColor(Intersection intersection, Vec3D cameraRay, Scene scene) {
 		int recurtion = scene.getRecusion();
 		Vec3D color = getSimpleColor(intersection, cameraRay, scene);
-		color = calcShapeTransparency(intersection, cameraRay, scene, color);
-		return color.add(calcShapeReflection(intersection, cameraRay, scene, recurtion)).clip();
+		Vec3D trans = calcShapeTransparency(intersection, cameraRay, scene, color);
+		Vec3D reflect= calcShapeReflection(intersection, cameraRay, scene, recurtion);
+		if (reflect.isBlack() && intersection.getShape().reflectionColor().iswhite()) {
+//			System.out.print("Aha");
+		}
+
+		return trans.add(reflect).clip();
 	}
 	
 	public static Vec3D getSimpleColor(Intersection intersection, Vec3D cameraRay, Scene scene) {
 		if(intersection == null) {
 			return scene.getBackground();
 		}
-		Vec3D color = new Vec3D(0,0,0,"RGB");
+		Vec3D color = Vec3D.black;
 		Vec3D point = intersection.getPoint(); 
 		LinkedList<Light> lights = scene.lights;
 		
@@ -38,26 +43,26 @@ public class ColorCompute {
 			color = color.add(diffuseColor);
 			color = color.add(specularColor);
 		}
-		return color;
+		return color.clip();
 	}
 	
 	public static Vec3D calcShapeReflection(Intersection intersection, Vec3D ray, Scene scene, int recurtion) {
 		if((intersection == null) || (recurtion == 0)){
-			return new Vec3D(0,0,0,"RGB");			
+			return Vec3D.black;			
 		}
 		Vec3D point = intersection.getPoint();
 		Surface shape = intersection.getShape();
 		Vec3D normal = intersection.getShape().getNormalVec(point);
-		double dotProduct = ray.dotProduct(normal);
-		dotProduct = (double) (dotProduct * 2);
-		Vec3D reflectionRay = normal.multiply(dotProduct);
-		reflectionRay = ray.subtract(reflectionRay);
+		Vec3D reflectionRay = ray.subtract(normal.multiply(2 * ray.dotProduct(normal)));
+				
 		Intersection newIntersection = scene.firstIntersectionOfRay(point, reflectionRay, shape);
 		Vec3D shapeColor = getSimpleColor(newIntersection, reflectionRay, scene);
 		shapeColor = calcShapeTransparency(newIntersection, reflectionRay, scene, shapeColor);
 		Vec3D reflectionColor =  calcShapeReflection(newIntersection, reflectionRay, scene, recurtion - 1);
-		reflectionColor = reflectionColor.add(shapeColor);
-		return shape.getMaterial().getReflectionColor().multiply(reflectionColor);	
+
+		if (shape.reflectionColor().multiply(reflectionColor.add(shapeColor)).isBlack() && shape.reflectionColor().iswhite())
+			System.out.print("Aha");
+		return shape.reflectionColor().multiply(reflectionColor.add(shapeColor));	
 	}
 	
 	public static Vec3D calcShapeTransparency(Intersection intersection, Vec3D cameraRay, Scene scene, Vec3D color) {
@@ -71,6 +76,7 @@ public class ColorCompute {
 		}
 		Vec3D point = intersection.getPoint();
 		double transparency = shape.material.Transparency;
+		
 		Intersection newIntersection = scene.firstIntersectionOfRay(point, cameraRay, shape);
 		finalColor = color.multiply(1 - transparency).add(getSimpleColor(newIntersection, cameraRay, scene).multiply(transparency));
 		while(newIntersection != null) {
@@ -85,12 +91,11 @@ public class ColorCompute {
 				finalColor = finalColor.multiply(1 - transparency).add(getSimpleColor(newIntersection, cameraRay, scene).multiply(transparency));
 			}
 		}
-		return finalColor;
+		return finalColor.clip();
 	}
 	
  	public static Vec3D calcR(Vec3D vec, Vec3D normal) {
-		double dotProduct = vec.dotProduct(normal);
-		dotProduct = (double) (dotProduct * 2);
+		double dotProduct = 2 * vec.dotProduct(normal);
 		Vec3D r = normal.multiply(dotProduct);
 		return r.subtract(vec);
 	}
@@ -106,7 +111,7 @@ public class ColorCompute {
 		double dotProduct = lightReflection.dotProduct(currentLightRay);
 		dotProduct = (double) Math.pow(Math.max(dotProduct, 0.0), n) * lightIntensity * light.specularIntensity(); 
 		Vec3D intensity = intersection.getShape().specularColor().multiply(light.getColor()).multiply(dotProduct);
-		return intensity;	
+		return intensity.clip();	
 	}
 	
 	public static Vec3D getDiffuseColor(Intersection intersection, Scene scene, double lightIntensity, Light light, Vec3D currentLightRay) {
@@ -119,7 +124,7 @@ public class ColorCompute {
 		//Vec3D intensity = light.getColor().multiply(lightIntensity);
 		double dotProduct = currentLightRay.dotProduct(normal);
 		dotProduct = Math.max((double)dotProduct, 0.0) * lightIntensity;
-		return shape.diffuseColor().multiply(light.getColor()).multiply(dotProduct);	
+		return shape.diffuseColor().multiply(light.getColor()).multiply(dotProduct).clip();	
 	}
 	
 	public static double getLightIntensity(Intersection intersection, Scene scene, Light light, Vec3D currentLightRay) {
@@ -142,8 +147,8 @@ public class ColorCompute {
 	
 	public static int calNumberOfHits(Grid grid, Vec3D point, Surface shape, LinkedList<Surface> shapes, Scene scene) {
 		Random rand = new Random();
-		double rand_dub1;
-		double rand_dub2;
+//		double rand_dub1;
+//		double rand_dub2;
 		Vec3D currentCellRay;
 		//Vec3D currentRaySourcePosition;
 		int numOfHits = 0;
@@ -151,10 +156,13 @@ public class ColorCompute {
 		for(int i = 0; i < n; i++) {
 			for(int j = 0; j < n; j++) {
 				Vec3D currentCellLeftPoint = grid.getbottomLeftPoint().add(grid.du().multiply(i).add(grid.dv().multiply(j)));
-				rand_dub1 = rand.nextDouble();
-				rand_dub2 = rand.nextDouble();
-				Vec3D currentRaySourcePosition = new Vec3D(rand_dub1 * grid.getCellSize(), rand_dub2 * grid.getCellSize(), 0.0, "XYZ");
-				currentRaySourcePosition = currentCellLeftPoint.add(currentRaySourcePosition);
+				Vec3D uAddition = grid.du().multiply(rand.nextDouble()*grid.getCellSize());
+				Vec3D vAddition = grid.dv().multiply(rand.nextDouble()*grid.getCellSize());
+//				rand_dub1 = rand.nextDouble();
+//				rand_dub2 = rand.nextDouble();
+//				Vec3D currentRaySourcePosition = new Vec3D(rand_dub1 * grid.getCellSize(), rand_dub2 * grid.getCellSize(), 0.0, "XYZ");
+				
+				Vec3D currentRaySourcePosition = currentCellLeftPoint.add(uAddition).add(vAddition);
 				currentCellRay = Vec3D.createDistVec(currentRaySourcePosition, point);
 				currentCellRay = currentCellRay.normalized();
 				Intersection intersection = scene.firstIntersectionOfRay(currentRaySourcePosition, currentCellRay, null);		

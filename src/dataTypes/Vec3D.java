@@ -156,6 +156,21 @@ public class Vec3D {
 		return v3;
 	}
 	
+	public boolean isBlack() {
+		return v1 < 0.05 && v2 < 0.05 && v3 < 0.05;		
+	}
+	
+	public boolean iswhite() {
+		return v1 >= 0.9 && v2 >= 0.9 && v3 >= 0.9;		
+	}
+	
+	public boolean outOfRange() {
+		boolean t1 = v1<0 || v1 >1;
+		boolean t2 = v2<0 || v2 >1;
+		boolean t3 = v3<0 || v3 >1;
+		return t1 || t2 || t3;		
+	}
+	
 	public Vec3D clip() {
 		double t1 = Math.max(Math.min(1,v1),0);
 		double t2 = Math.max(Math.min(1,v2),0);
